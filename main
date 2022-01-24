@@ -1,0 +1,81 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <deque>
+#include <map>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+
+
+using namespace std;
+
+ostream& operator <<(ostream& out, vector<string>& a) {
+	for (int i = 0; i < a.size(); ++i) {
+		out << a[i] << endl;
+	}
+	return out;
+}
+
+void split(string& a, vector<string>& b) {
+	while (a.find(" ") < 200) {
+		cout << a.substr(a.find(" "));
+	}
+}
+
+string maxx(vector<string>& a, vector<int>& indexes) {
+	int max_j = 0, num, j;
+	vector <string> b;
+	vector <string> x;
+	vector <string> check = a;
+	sort(check.begin(), check.end());
+	check.erase(unique(check.begin(), check.end()), check.end());
+	if (check.size() == 1) {
+		cout << "KO";
+		return check[0];
+	}
+	for (int i = 0; i < a.size(); ++i) {
+		j = indexes[i];
+		if (a[i].size() == j) {
+			x = a;
+			x.erase(x.cbegin() + i);
+			vector <int> loc_index(0, a.size());
+			a[i] += " " + maxx(x, loc_index);
+			indexes[i] += 1, j += 1;
+		}
+		num = int(a[i][j]) - 48;
+		if (num > max_j) {
+			max_j = num;
+		}
+	}
+	cout << "OK";
+	vector <int> ind;
+	for (int i = 0; i < a.size(); ++i) {
+		j = indexes[i];
+		if (char(max_j + 48) == a[i][j]) {
+			b.push_back(a[i]);
+			ind.push_back(j + 1);
+		}
+	}
+	cout << "OK";
+	cout << "-----------------------" << endl << b;
+	return maxx(b, ind);
+}
+
+int main() {
+	int n;
+	string max;
+	cin >> n;
+	vector <string> a;
+	a.resize(n);
+	for (int i = 0; i < n; ++i) {
+		cin >> a[i];
+	}
+	vector <string> b = a;
+	for (int i = 0; i < n; ++i) {
+		vector<int> ind(n - i, 0);
+		max = maxx(b, ind);
+		split(max, b);
+	}
+	cout << b;
+}
